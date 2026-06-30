@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+  OWNER
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  email     String   @unique
+  password  String
+  address   String
+  role      Role
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  store   Store?   @relation("StoreOwner")
+  ratings Rating[] @relation("UserRatings")
+
+  @@index([role])
+}
+
+model Store {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  email     String   @unique
+  address   String
+  ownerId   String   @unique @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner   User     @relation("StoreOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  ratings Rating[] @relation("StoreRatings")
+
+  @@index([name])
+  @@index([address])
+}
+
+model Rating {
+  id        String   @id @default(uuid()) @db.Uuid
+  rating    Int
+
+  userId    String   @db.Uuid
+  storeId   String   @db.Uuid
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User  @relation("UserRatings", fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation("StoreRatings", fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storeId])
+
+  @@index([userId])
+  @@index([storeId])
+}
