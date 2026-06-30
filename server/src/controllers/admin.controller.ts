@@ -6,6 +6,7 @@ import {
   createStore,
   getUsers,
   getStores,
+  getUserById,
 
 } from "../services/admin.service";
 import { createUserSchema } from "../validators/admin.validation";
@@ -109,6 +110,18 @@ export const listStores = asyncHandler(
     return res.status(200).json({
       success: true,
       data: result,
+    });
+  }
+);
+
+export const getUserDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+
+    const user = await getUserById(id);
+    return res.status(200).json({
+      success: true,
+      data: user,
     });
   }
 );

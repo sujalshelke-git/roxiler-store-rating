@@ -277,3 +277,30 @@ export const getStores = async (
     totalPages: Math.ceil(total / limit),
   };
 };
+
+export const getUserById = async (id: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      store: true,
+      ratings: {
+        include: {
+          store: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  return user;
+};

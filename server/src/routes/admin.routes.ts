@@ -7,6 +7,7 @@ import {
   addStore,
   listUsers,
   listStores,
+  getUserDetails,
 } from "../controllers/admin.controller";
 
 import { authenticate } from "../middleware/auth.middleware";
@@ -24,6 +25,7 @@ router.post("/users", addUser);
 router.post("/stores", addStore);
 router.get("/users", listUsers);
 router.get("/stores", listStores);
+router.get("/users/:id", getUserDetails);
 
 
 export default router;
