@@ -1,16 +1,21 @@
 import { Router } from "express";
-import { dashboard } from "../controllers/admin.controller";
+import { Role } from "@prisma/client";
+
+import {
+  dashboard,
+  addUser,
+} from "../controllers/admin.controller";
+
 import { authenticate } from "../middleware/auth.middleware";
 import { authorize } from "../middleware/role.middleware";
-import { Role } from "@prisma/client";
 
 const router = Router();
 
-router.get(
-  "/dashboard",
-  authenticate,
-  authorize(Role.ADMIN),
-  dashboard
-);
+router.use(authenticate);
+router.use(authorize(Role.ADMIN));
+
+router.get("/dashboard", dashboard);
+
+router.post("/users", addUser);
 
 export default router;

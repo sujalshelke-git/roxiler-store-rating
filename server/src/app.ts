@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+import { errorHandler } from "./middleware/error.middleware";
 
 import api from "./api";
 
@@ -24,5 +25,5 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api", api);
-
+app.use(errorHandler);
 export default app;

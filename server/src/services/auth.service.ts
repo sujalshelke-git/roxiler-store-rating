@@ -2,6 +2,7 @@ import { Role } from "@prisma/client";
 import prisma from "../config/prisma";
 import { hashPassword, comparePassword } from "../utils/password";
 import { generateToken } from "../utils/jwt";
+import { AppError } from "../utils/AppError";
 
 type RegisterUserInput = {
   name: string;
@@ -19,7 +20,7 @@ export const registerUser = async (data: RegisterUserInput) => {
   });
 
   if (existingUser) {
-    throw new Error("Email already exists");
+    throw new AppError("Email already exists", 400);
   }
 
   // Hash password
@@ -56,7 +57,7 @@ export const loginUser = async (
   });
 
   if (!user) {
-    throw new Error("Invalid email or password");
+    throw new AppError("Invalid email or password",401);
   }
 
   // Compare password
@@ -66,7 +67,7 @@ export const loginUser = async (
   );
 
   if (!isPasswordMatch) {
-    throw new Error("Invalid email or password");
+    throw new AppError("Invalid email or password",401);
   }
 
   // Generate JWT
@@ -95,7 +96,7 @@ export const changePassword = async (
   });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new AppError("User not found",404);
   }
 
   const isPasswordMatch = await comparePassword(
@@ -104,7 +105,7 @@ export const changePassword = async (
   );
 
   if (!isPasswordMatch) {
-    throw new Error("Old password is incorrect");
+    throw new AppError("Old password is incorrect",400);
   }
 
   const hashedPassword = await hashPassword(newPassword);

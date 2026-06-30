@@ -9,71 +9,54 @@ import {
   loginSchema,
   changePasswordSchema,
 } from "../validators/auth.validation";
+import { asyncHandler } from "../utils/asyncHandler";
 
-export const signup = async (req: Request, res: Response) => {
-  try {
-    const validatedData = signupSchema.parse(req.body);
+export const signup = asyncHandler(async (req: Request, res: Response) => {
+  const validatedData = signupSchema.parse(req.body);
 
-    const user = await registerUser(validatedData);
+  const user = await registerUser(validatedData);
 
-    return res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      data: user,
-    });
-  } catch (error: any) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+  return res.status(201).json({
+    success: true,
+    message: "User registered successfully",
+    data: user,
+  });
+});
 
-export const login = async (req: Request, res: Response) => {
-  try {
-    const validatedData = loginSchema.parse(req.body);
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const validatedData = loginSchema.parse(req.body);
 
-    const result = await loginUser(
-      validatedData.email,
-      validatedData.password
-    );
+  const result = await loginUser(
+    validatedData.email,
+    validatedData.password
+  );
 
-    // Store JWT in HTTP-only Cookie
-    res.cookie("token", result.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+  // Store JWT in HTTP-only Cookie
+  res.cookie("token", result.token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
 
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      data: result.user,
-    });
-  } catch (error: any) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-export const getCurrentUser = async (
-  req: Request,
-  res: Response
-) => {
   return res.status(200).json({
     success: true,
-    data: req.user,
+    message: "Login successful",
+    data: result.user,
   });
-};
+});
 
-export const updatePassword = async (
-  req: Request,
-  res: Response
-) => {
-  try {
+export const getCurrentUser = asyncHandler(
+  async (req: Request, res: Response) => {
+    return res.status(200).json({
+      success: true,
+      data: req.user,
+    });
+  }
+);
+
+export const updatePassword = asyncHandler(
+  async (req: Request, res: Response) => {
     const validatedData = changePasswordSchema.parse(req.body);
 
     const userId = req.user!.id;
@@ -88,22 +71,14 @@ export const updatePassword = async (
       success: true,
       message: result.message,
     });
-  } catch (error: any) {
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
   }
-};
+);
 
-export const logout = async (
-  req: Request,
-  res: Response
-) => {
+export const logout = asyncHandler(async (req: Request, res: Response) => {
   res.clearCookie("token");
 
   return res.status(200).json({
     success: true,
     message: "Logout successful",
   });
-};
+});
