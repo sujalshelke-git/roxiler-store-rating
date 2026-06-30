@@ -2,8 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { Role } from "@prisma/client";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
-
 interface JwtPayload {
   id: string;
   role: Role;
@@ -15,18 +13,22 @@ export const authenticate = (
   next: NextFunction
 ) => {
   try {
-    const authHeader = req.headers.authorization;
+    const token = req.cookies.token;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Access denied. No token provided.",
+        message: "Unauthorized",
       });
     }
 
-    const token = authHeader.split(" ")[1];
+    const secret = process.env.JWT_SECRET;
 
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    if (!secret) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+
+    const decoded = jwt.verify(token, secret) as JwtPayload;
 
     req.user = decoded;
 
@@ -34,7 +36,7 @@ export const authenticate = (
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: "Invalid or expired token.",
+      message: "Invalid or expired token",
     });
   }
 };
