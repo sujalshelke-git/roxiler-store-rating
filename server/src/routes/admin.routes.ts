@@ -4,7 +4,8 @@ import { Role } from "@prisma/client";
 import {
   dashboard,
   addUser,
-  addStore
+  addStore,
+  listUsers,
 } from "../controllers/admin.controller";
 
 import { authenticate } from "../middleware/auth.middleware";
@@ -20,5 +21,7 @@ router.get("/dashboard", dashboard);
 
 router.post("/users", addUser);
 router.post("/stores", addStore);
+router.get("/users", listUsers);
+
 
 export default router;

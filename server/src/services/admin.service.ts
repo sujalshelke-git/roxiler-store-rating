@@ -126,3 +126,66 @@ export const createStore = async (
 
   return store;
 };
+
+export const getUsers = async (
+  page: number,
+  limit: number,
+  search: string,
+  sortBy: string,
+  order: "asc" | "desc"
+) => {
+  const skip = (page - 1) * limit;
+
+  const where = search
+    ? {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            email: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            address: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+        ],
+      }
+    : {};
+
+  const users = await prisma.user.findMany({
+    where,
+    skip,
+    take: limit,
+    orderBy: {
+      [sortBy]: order,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      address: true,
+      role: true,
+      createdAt: true,
+    },
+  });
+
+  const total = await prisma.user.count({
+    where,
+  });
+
+  return {
+    users,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
+};
