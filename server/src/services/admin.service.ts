@@ -60,3 +60,69 @@ export const createUser = async (
     role: user.role,
   };
 };
+
+type CreateStoreInput = {
+  name: string;
+  email: string;
+  address: string;
+  ownerId: string;
+};
+
+export const createStore = async (
+  data: CreateStoreInput
+) => {
+  // Email already used?
+  const existingStore = await prisma.store.findUnique({
+    where: {
+      email: data.email,
+    },
+  });
+
+  if (existingStore) {
+    throw new AppError("Store email already exists", 400);
+  }
+
+  // Owner exists?
+  const owner = await prisma.user.findUnique({
+    where: {
+      id: data.ownerId,
+    },
+  });
+
+  if (!owner) {
+    throw new AppError("Owner not found", 404);
+  }
+
+  // Must be OWNER
+  if (owner.role !== Role.OWNER) {
+    throw new AppError(
+      "Selected user is not a store owner",
+      400
+    );
+  }
+
+  // Owner can own only one store
+  const ownerStore = await prisma.store.findUnique({
+    where: {
+      ownerId: data.ownerId,
+    },
+  });
+
+  if (ownerStore) {
+    throw new AppError(
+      "Owner already has a store",
+      400
+    );
+  }
+
+  const store = await prisma.store.create({
+    data: {
+      name: data.name,
+      email: data.email,
+      address: data.address,
+      ownerId: data.ownerId,
+    },
+  });
+
+  return store;
+};

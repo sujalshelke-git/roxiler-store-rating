@@ -5,6 +5,8 @@ import {
   createUser,
 } from "../services/admin.service";
 import { createUserSchema } from "../validators/admin.validation";
+import { createStore } from "../services/admin.service";
+import { createStoreSchema } from "../validators/admin.validation";
 
 export const dashboard = asyncHandler(
   async (req: Request, res: Response) => {
@@ -29,6 +31,22 @@ export const addUser = asyncHandler(
       success: true,
       message: "User created successfully",
       data: user,
+    });
+  }
+);
+
+export const addStore = asyncHandler(
+  async (req: Request, res: Response) => {
+    const validatedData = createStoreSchema.parse(
+      req.body
+    );
+
+    const store = await createStore(validatedData);
+
+    return res.status(201).json({
+      success: true,
+      message: "Store created successfully",
+      data: store,
     });
   }
 );

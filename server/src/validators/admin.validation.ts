@@ -24,3 +24,19 @@ export const createUserSchema = z.object({
 
   role: z.nativeEnum(Role),
 });
+
+export const createStoreSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Store name is required")
+    .max(60, "Store name must not exceed 60 characters"),
+
+  email: z.string().email("Invalid email"),
+
+  address: z
+    .string()
+    .min(1, "Address is required")
+    .max(400, "Address must not exceed 400 characters"),
+
+  ownerId: z.string().uuid("Invalid owner id"),
+});

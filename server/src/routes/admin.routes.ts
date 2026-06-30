@@ -4,10 +4,12 @@ import { Role } from "@prisma/client";
 import {
   dashboard,
   addUser,
+  addStore
 } from "../controllers/admin.controller";
 
 import { authenticate } from "../middleware/auth.middleware";
 import { authorize } from "../middleware/role.middleware";
+
 
 const router = Router();
 
@@ -17,5 +19,6 @@ router.use(authorize(Role.ADMIN));
 router.get("/dashboard", dashboard);
 
 router.post("/users", addUser);
+router.post("/stores", addStore);
 
 export default router;
