@@ -6,6 +6,7 @@ import {
   addUser,
   addStore,
   listUsers,
+  listStores,
 } from "../controllers/admin.controller";
 
 import { authenticate } from "../middleware/auth.middleware";
@@ -22,6 +23,7 @@ router.get("/dashboard", dashboard);
 router.post("/users", addUser);
 router.post("/stores", addStore);
 router.get("/users", listUsers);
+router.get("/stores", listStores);
 
 
 export default router;

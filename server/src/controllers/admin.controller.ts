@@ -5,6 +5,7 @@ import {
   createUser,
   createStore,
   getUsers,
+  getStores,
 
 } from "../services/admin.service";
 import { createUserSchema } from "../validators/admin.validation";
@@ -69,6 +70,35 @@ export const listUsers = asyncHandler(
       (req.query.order as "asc" | "desc") || "desc";
 
     const result = await getUsers(
+      page,
+      limit,
+      search,
+      sortBy,
+      order
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  }
+);
+
+export const listStores = asyncHandler(
+  async (req: Request, res: Response) => {
+    const page = Number(req.query.page) || 1;
+
+    const limit = Number(req.query.limit) || 10;
+
+    const search = (req.query.search as string) || "";
+
+    const sortBy =
+      (req.query.sortBy as string) || "createdAt";
+
+    const order =
+      (req.query.order as "asc" | "desc") || "desc";
+
+    const result = await getStores(
       page,
       limit,
       search,

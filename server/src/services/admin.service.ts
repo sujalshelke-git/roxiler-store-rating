@@ -189,3 +189,91 @@ export const getUsers = async (
     totalPages: Math.ceil(total / limit),
   };
 };
+
+export const getStores = async (
+  page: number,
+  limit: number,
+  search: string,
+  sortBy: string,
+  order: "asc" | "desc"
+) => {
+  const skip = (page - 1) * limit;
+
+  const where = search
+    ? {
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            email: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            address: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+        ],
+      }
+    : {};
+
+  const stores = await prisma.store.findMany({
+    where,
+    skip,
+    take: limit,
+    orderBy: {
+      [sortBy]: order,
+    },
+    include: {
+      owner: {
+        select: {
+          name: true,
+          email: true,
+        },
+      },
+      ratings: {
+        select: {
+          rating: true,
+        },
+      },
+    },
+  });
+
+  const formattedStores = stores.map((store) => {
+    const averageRating =
+      store.ratings.length === 0
+        ? 0
+        : store.ratings.reduce(
+            (sum, item) => sum + item.rating,
+            0
+          ) / store.ratings.length;
+
+    return {
+      id: store.id,
+      name: store.name,
+      email: store.email,
+      address: store.address,
+      owner: store.owner,
+      averageRating: Number(averageRating.toFixed(1)),
+      createdAt: store.createdAt,
+    };
+  });
+
+  const total = await prisma.store.count({
+    where,
+  });
+
+  return {
+    stores: formattedStores,
+    total,
+    page,
+    totalPages: Math.ceil(total / limit),
+  };
+};
