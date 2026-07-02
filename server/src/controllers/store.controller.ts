@@ -16,6 +16,7 @@ export const listStores = asyncHandler(
     const search = (req.query.search as string) || "";
 
     const stores = await getStores(
+      req.user!.id,
       page,
       limit,
       search

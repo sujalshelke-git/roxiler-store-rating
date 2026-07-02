@@ -2,6 +2,7 @@ import prisma from "../config/prisma";
 import { AppError } from "../utils/AppError";
 
 export const getStores = async (
+  userId: string,
   page: number,
   limit: number,
   search: string
@@ -37,7 +38,7 @@ export const getStores = async (
   });
 
   const formattedStores = stores.map((store) => {
-    const avg =
+    const averageRating =
       store.ratings.length === 0
         ? 0
         : store.ratings.reduce(
@@ -45,12 +46,21 @@ export const getStores = async (
             0
           ) / store.ratings.length;
 
+    const userRating = store.ratings.find(
+      (rating) => rating.userId === userId
+    );
+
     return {
       id: store.id,
       name: store.name,
       email: store.email,
       address: store.address,
-      averageRating: Number(avg.toFixed(1)),
+      averageRating: Number(
+        averageRating.toFixed(1)
+      ),
+      userRating: userRating
+        ? userRating.rating
+        : null,
     };
   });
 
@@ -71,7 +81,6 @@ export const addRating = async (
   storeId: string,
   rating: number
 ) => {
-  // Check store exists
   const store = await prisma.store.findUnique({
     where: {
       id: storeId,
@@ -82,15 +91,15 @@ export const addRating = async (
     throw new AppError("Store not found", 404);
   }
 
-  // Check if already rated
-  const existingRating = await prisma.rating.findUnique({
-    where: {
-      userId_storeId: {
-        userId,
-        storeId,
+  const existingRating =
+    await prisma.rating.findUnique({
+      where: {
+        userId_storeId: {
+          userId,
+          storeId,
+        },
       },
-    },
-  });
+    });
 
   if (existingRating) {
     throw new AppError(
@@ -115,30 +124,32 @@ export const updateRating = async (
   storeId: string,
   rating: number
 ) => {
-  const existingRating = await prisma.rating.findUnique({
-    where: {
-      userId_storeId: {
-        userId,
-        storeId,
+  const existingRating =
+    await prisma.rating.findUnique({
+      where: {
+        userId_storeId: {
+          userId,
+          storeId,
+        },
       },
-    },
-  });
+    });
 
   if (!existingRating) {
     throw new AppError("Rating not found", 404);
   }
 
-  const updatedRating = await prisma.rating.update({
-    where: {
-      userId_storeId: {
-        userId,
-        storeId,
+  const updatedRating =
+    await prisma.rating.update({
+      where: {
+        userId_storeId: {
+          userId,
+          storeId,
+        },
       },
-    },
-    data: {
-      rating,
-    },
-  });
+      data: {
+        rating,
+      },
+    });
 
   return updatedRating;
 };
