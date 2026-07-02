@@ -1,13 +1,15 @@
 import { Router } from "express";
+import { Role } from "@prisma/client";
+
 import {
   listStores,
   submitRating,
   editRating,
+  changePassword,
 } from "../controllers/store.controller";
+
 import { authenticate } from "../middleware/auth.middleware";
 import { authorize } from "../middleware/role.middleware";
-
-import { Role } from "@prisma/client";
 
 const router = Router();
 
@@ -20,5 +22,8 @@ router.get("/", listStores);
 router.post("/:storeId/rating", submitRating);
 
 router.put("/:storeId/rating", editRating);
+
+
+router.put( "/change-password",changePassword);
 
 export default router;

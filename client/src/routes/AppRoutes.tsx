@@ -1,25 +1,33 @@
 import {
   BrowserRouter,
-  
+  Navigate,
   Route,
   Routes,
 } from "react-router-dom";
 
+import ProtectedRoute from "../components/common/ProtectedRoute";
+import DashboardLayout from "../layouts/DashboardLayout";
+
+// Auth
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
 
-import DashboardLayout from "../layouts/DashboardLayout";
-import ProtectedRoute from "../components/common/ProtectedRoute";
-
+// Admin
 import AdminDashboard from "../pages/admin/Dashboard";
 import Users from "../pages/admin/Users";
 import Stores from "../pages/admin/Stores";
 import CreateUser from "../pages/admin/CreateUser";
 import CreateStore from "../pages/admin/CreateStore";
 
+// User
 import UserStores from "../pages/user/Stores";
-import OwnerDashboard from "../pages/owner/Dashboard";
+import UserChangePassword from "../pages/user/ChangePassword";
 
+// Owner
+import OwnerDashboard from "../pages/owner/Dashboard";
+import OwnerChangePassword from "../pages/owner/ChangePassword";
+
+// Common
 import NotFound from "../pages/NotFound";
 
 const AppRoutes = () => {
@@ -27,13 +35,24 @@ const AppRoutes = () => {
     <BrowserRouter>
       <Routes>
 
-        {/* Public */}
+        {/* Public Routes */}
 
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/"
+          element={<Navigate to="/login" replace />}
+        />
 
-        {/* Protected */}
+        <Route
+          path="/login"
+          element={<Login />}
+        />
+
+        <Route
+          path="/signup"
+          element={<Signup />}
+        />
+
+        {/* Protected Routes */}
 
         <Route
           element={
@@ -42,47 +61,59 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         >
-          {/* Admin */}
+          {/* ================= ADMIN ================= */}
 
           <Route
-            path="admin/dashboard"
+            path="/admin/dashboard"
             element={<AdminDashboard />}
           />
 
           <Route
-            path="admin/users"
+            path="/admin/users"
             element={<Users />}
           />
 
           <Route
-            path="admin/stores"
+            path="/admin/stores"
             element={<Stores />}
           />
 
           <Route
-            path="admin/create-user"
+            path="/admin/create-user"
             element={<CreateUser />}
           />
 
           <Route
-            path="admin/create-store"
+            path="/admin/create-store"
             element={<CreateStore />}
           />
 
-          {/* User */}
+          {/* ================= USER ================= */}
 
           <Route
-            path="user/stores"
+            path="/user/stores"
             element={<UserStores />}
           />
 
-          {/* Owner */}
+          <Route
+            path="/user/change-password"
+            element={<UserChangePassword />}
+          />
+
+          {/* ================= OWNER ================= */}
 
           <Route
-            path="owner/dashboard"
+            path="/owner/dashboard"
             element={<OwnerDashboard />}
           />
+
+          <Route
+            path="/owner/change-password"
+            element={<OwnerChangePassword />}
+          />
         </Route>
+
+        {/* 404 */}
 
         <Route
           path="*"

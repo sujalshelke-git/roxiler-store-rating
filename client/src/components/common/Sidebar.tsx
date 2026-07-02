@@ -1,8 +1,10 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 const Sidebar = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+
+  const navigate = useNavigate();
 
   const adminMenu = [
     {
@@ -32,12 +34,20 @@ const Sidebar = () => {
       title: "Stores",
       path: "/user/stores",
     },
+    {
+    title: "Change Password",
+    path: "/user/change-password",
+  },
   ];
 
   const ownerMenu = [
     {
       title: "Dashboard",
       path: "/owner/dashboard",
+    },
+    {
+      title: "Change Password",
+      path: "/owner/change-password",
     },
   ];
 
@@ -48,23 +58,55 @@ const Sidebar = () => {
       ? ownerMenu
       : userMenu;
 
-  return (
-    <aside className="w-64 min-h-screen bg-slate-900 text-white">
+  const handleLogout = async () => {
+    try {
+      await logout();
 
-      <div className="p-6 text-2xl font-bold border-b border-slate-700">
-        Store Rating
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <aside className="flex min-h-screen w-64 flex-col bg-slate-900 text-white">
+
+      {/* Logo */}
+
+      <div className="border-b border-slate-700 p-6">
+
+        <h1 className="text-2xl font-bold">
+          Store Rating
+        </h1>
+
       </div>
 
-      <nav className="p-4">
+      {/* User Info */}
+
+      <div className="border-b border-slate-700 px-6 py-4">
+
+        <p className="font-semibold">
+          {user?.name}
+        </p>
+
+        <p className="text-sm text-slate-400">
+          {user?.role}
+        </p>
+
+      </div>
+
+      {/* Navigation */}
+
+      <nav className="flex-1 p-4">
 
         {menu.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `block rounded px-4 py-3 mb-2 ${
+              `mb-2 block rounded-lg px-4 py-3 transition ${
                 isActive
-                  ? "bg-blue-600"
+                  ? "bg-blue-600 text-white"
                   : "hover:bg-slate-800"
               }`
             }
@@ -74,6 +116,19 @@ const Sidebar = () => {
         ))}
 
       </nav>
+
+      {/* Logout */}
+
+      <div className="border-t border-slate-700 p-4">
+
+        <button
+          onClick={handleLogout}
+          className="w-full rounded-lg bg-red-600 px-4 py-3 font-medium transition hover:bg-red-700"
+        >
+          Logout
+        </button>
+
+      </div>
 
     </aside>
   );

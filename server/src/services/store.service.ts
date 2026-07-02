@@ -1,5 +1,9 @@
 import prisma from "../config/prisma";
 import { AppError } from "../utils/AppError";
+import {
+  comparePassword,
+  hashPassword,
+} from "../utils/password";
 
 export const getStores = async (
   userId: string,
@@ -88,7 +92,10 @@ export const addRating = async (
   });
 
   if (!store) {
-    throw new AppError("Store not found", 404);
+    throw new AppError(
+      "Store not found",
+      404
+    );
   }
 
   const existingRating =
@@ -108,15 +115,13 @@ export const addRating = async (
     );
   }
 
-  const newRating = await prisma.rating.create({
+  return prisma.rating.create({
     data: {
       rating,
       userId,
       storeId,
     },
   });
-
-  return newRating;
 };
 
 export const updateRating = async (
@@ -135,21 +140,71 @@ export const updateRating = async (
     });
 
   if (!existingRating) {
-    throw new AppError("Rating not found", 404);
+    throw new AppError(
+      "Rating not found",
+      404
+    );
   }
 
-  const updatedRating =
-    await prisma.rating.update({
-      where: {
-        userId_storeId: {
-          userId,
-          storeId,
-        },
+  return prisma.rating.update({
+    where: {
+      userId_storeId: {
+        userId,
+        storeId,
       },
-      data: {
-        rating,
+    },
+    data: {
+      rating,
+    },
+  });
+};
+
+export const updateUserPassword = async (
+  userId: string,
+  currentPassword: string,
+  newPassword: string
+) => {
+  const user =
+    await prisma.user.findUnique({
+      where: {
+        id: userId,
       },
     });
 
-  return updatedRating;
+  if (!user) {
+    throw new AppError(
+      "User not found",
+      404
+    );
+  }
+
+  const isPasswordCorrect =
+    await comparePassword(
+      currentPassword,
+      user.password
+    );
+
+  if (!isPasswordCorrect) {
+    throw new AppError(
+      "Current password is incorrect",
+      400
+    );
+  }
+
+  const hashedPassword =
+    await hashPassword(newPassword);
+
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      password: hashedPassword,
+    },
+  });
+
+  return {
+    message:
+      "Password updated successfully",
+  };
 };

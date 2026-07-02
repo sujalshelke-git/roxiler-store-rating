@@ -28,3 +28,13 @@ export interface OwnerDashboardResponse {
 export const getDashboard = () => {
   return axiosInstance.get("/owner/dashboard");
 };
+
+export const changePassword = (data: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  return axiosInstance.put(
+    "/owner/change-password",
+    data
+  );
+};

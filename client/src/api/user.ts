@@ -6,7 +6,7 @@ export interface Store {
   email: string;
   address: string;
   averageRating: number;
-  userRating?: number | null;
+  userRating: number | null;
 }
 
 export const getStores = (
@@ -42,5 +42,15 @@ export const updateRating = (
     {
       rating,
     }
+  );
+};
+
+export const changePassword = (data: {
+  currentPassword: string;
+  newPassword: string;
+}) => {
+  return axiosInstance.put(
+    "/stores/change-password",
+    data
   );
 };

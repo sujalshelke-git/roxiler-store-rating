@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
+
 import {
   getStores,
   addRating,
   updateRating,
+  updateUserPassword,
 } from "../services/store.service";
+
 import { ratingSchema } from "../validators/store.validation";
 
 export const listStores = asyncHandler(
@@ -31,7 +34,8 @@ export const listStores = asyncHandler(
 
 export const submitRating = asyncHandler(
   async (req: Request, res: Response) => {
-    const validatedData = ratingSchema.parse(req.body);
+    const validatedData =
+      ratingSchema.parse(req.body);
 
     const result = await addRating(
       req.user!.id,
@@ -41,7 +45,8 @@ export const submitRating = asyncHandler(
 
     return res.status(201).json({
       success: true,
-      message: "Rating submitted successfully",
+      message:
+        "Rating submitted successfully",
       data: result,
     });
   }
@@ -49,7 +54,8 @@ export const submitRating = asyncHandler(
 
 export const editRating = asyncHandler(
   async (req: Request, res: Response) => {
-    const validatedData = ratingSchema.parse(req.body);
+    const validatedData =
+      ratingSchema.parse(req.body);
 
     const result = await updateRating(
       req.user!.id,
@@ -59,8 +65,34 @@ export const editRating = asyncHandler(
 
     return res.status(200).json({
       success: true,
-      message: "Rating updated successfully",
+      message:
+        "Rating updated successfully",
       data: result,
     });
   }
 );
+
+export const changePassword =
+  asyncHandler(
+    async (
+      req: Request,
+      res: Response
+    ) => {
+      const {
+        currentPassword,
+        newPassword,
+      } = req.body;
+
+      await updateUserPassword(
+        req.user!.id,
+        currentPassword,
+        newPassword
+      );
+
+      return res.status(200).json({
+        success: true,
+        message:
+          "Password updated successfully",
+      });
+    }
+  );
