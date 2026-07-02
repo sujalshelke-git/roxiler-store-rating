@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import {
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
+import {
   getUsers,
   type User,
 } from "../../api/admin";
@@ -18,6 +22,12 @@ const Users = () => {
 
   const [search, setSearch] = useState("");
 
+  const [sortBy, setSortBy] =
+  useState("createdAt");
+
+  const [order, setOrder] =
+  useState<"asc" | "desc">("desc");
+
   const [totalPages, setTotalPages] =
     useState(1);
 
@@ -28,17 +38,19 @@ const Users = () => {
     useState(false);
 
   useEffect(() => {
-    loadUsers();
-  }, [page, search]);
+  loadUsers();
+}, [page, search, sortBy, order]);
 
   const loadUsers = async () => {
     try {
       setLoading(true);
 
       const res = await getUsers(
-        page,
-        search
-      );
+  page,
+  search,
+  sortBy,
+  order
+);
 
       setUsers(res.data.data.users);
 
@@ -56,6 +68,21 @@ const Users = () => {
     setSelectedUserId(id);
     setOpenModal(true);
   };
+
+  const handleSort = (field: string) => {
+  if (sortBy === field) {
+    setOrder(
+      order === "asc"
+        ? "desc"
+        : "asc"
+    );
+  } else {
+    setSortBy(field);
+    setOrder("asc");
+  }
+};
+
+  
 
   return (
     <div>
@@ -84,14 +111,57 @@ const Users = () => {
       ) : (
         <>
           <Table
-            headers={[
-              "Name",
-              "Email",
-              "Address",
-              "Role",
-              "Action",
-            ]}
-          >
+  headers={[
+    <button
+      key="name"
+      onClick={() => handleSort("name")}
+      className="flex items-center gap-2 font-semibold hover:text-blue-600"
+    >
+      Name
+
+      {sortBy === "name" &&
+        (order === "asc" ? (
+          <ArrowUp size={16} />
+        ) : (
+          <ArrowDown size={16} />
+        ))}
+    </button>,
+
+    <button
+      key="email"
+      onClick={() => handleSort("email")}
+      className="flex items-center gap-2 font-semibold hover:text-blue-600"
+    >
+      Email
+
+      {sortBy === "email" &&
+        (order === "asc" ? (
+          <ArrowUp size={16} />
+        ) : (
+          <ArrowDown size={16} />
+        ))}
+    </button>,
+
+    <button
+      key="address"
+      onClick={() => handleSort("address")}
+      className="flex items-center gap-2 font-semibold hover:text-blue-600"
+    >
+      Address
+
+      {sortBy === "address" &&
+        (order === "asc" ? (
+          <ArrowUp size={16} />
+        ) : (
+          <ArrowDown size={16} />
+        ))}
+    </button>,
+
+    "Role",
+
+    "Action",
+  ]}
+>
             {users.map((user) => (
               <tr
                 key={user.id}

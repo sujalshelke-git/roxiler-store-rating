@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import {
+  ArrowDown,
+  ArrowUp,
+} from "lucide-react";
+
+import {
   getStores,
   type Store,
 } from "../../api/admin";
@@ -18,6 +23,12 @@ const Stores = () => {
 
   const [search, setSearch] = useState("");
 
+  const [sortBy, setSortBy] =
+    useState("createdAt");
+
+  const [order, setOrder] =
+    useState<"asc" | "desc">("desc");
+
   const [totalPages, setTotalPages] =
     useState(1);
 
@@ -29,7 +40,7 @@ const Stores = () => {
 
   useEffect(() => {
     loadStores();
-  }, [page, search]);
+  }, [page, search, sortBy, order]);
 
   const loadStores = async () => {
     try {
@@ -37,7 +48,9 @@ const Stores = () => {
 
       const res = await getStores(
         page,
-        search
+        search,
+        sortBy,
+        order
       );
 
       setStores(res.data.data.stores);
@@ -52,6 +65,19 @@ const Stores = () => {
     }
   };
 
+  const handleSort = (field: string) => {
+    if (sortBy === field) {
+      setOrder(
+        order === "asc"
+          ? "desc"
+          : "asc"
+      );
+    } else {
+      setSortBy(field);
+      setOrder("asc");
+    }
+  };
+
   const openDetails = (id: string) => {
     setSelectedStoreId(id);
     setOpenModal(true);
@@ -63,6 +89,7 @@ const Stores = () => {
       <div className="flex items-center justify-between">
 
         <div>
+
           <h1 className="text-3xl font-bold">
             Stores
           </h1>
@@ -70,11 +97,12 @@ const Stores = () => {
           <p className="text-gray-500">
             Manage all registered stores
           </p>
+
         </div>
 
         <input
           type="text"
-          placeholder="Search store..."
+          placeholder="Search stores..."
           className="w-72 rounded-lg border border-gray-300 px-4 py-2 outline-none focus:border-blue-600"
           value={search}
           onChange={(e) => {
@@ -91,11 +119,73 @@ const Stores = () => {
         <>
           <Table
             headers={[
-              "Store",
-              "Email",
-              "Address",
+              <button
+                key="name"
+                onClick={() =>
+                  handleSort("name")
+                }
+                className="flex items-center gap-2 font-semibold hover:text-blue-600"
+              >
+                Store
+                {sortBy === "name" &&
+                  (order === "asc" ? (
+                    <ArrowUp size={16} />
+                  ) : (
+                    <ArrowDown size={16} />
+                  ))}
+              </button>,
+
+              <button
+                key="email"
+                onClick={() =>
+                  handleSort("email")
+                }
+                className="flex items-center gap-2 font-semibold hover:text-blue-600"
+              >
+                Email
+                {sortBy === "email" &&
+                  (order === "asc" ? (
+                    <ArrowUp size={16} />
+                  ) : (
+                    <ArrowDown size={16} />
+                  ))}
+              </button>,
+
+              <button
+                key="address"
+                onClick={() =>
+                  handleSort("address")
+                }
+                className="flex items-center gap-2 font-semibold hover:text-blue-600"
+              >
+                Address
+                {sortBy === "address" &&
+                  (order === "asc" ? (
+                    <ArrowUp size={16} />
+                  ) : (
+                    <ArrowDown size={16} />
+                  ))}
+              </button>,
+
               "Owner",
-              "Rating",
+
+              <button
+                key="averageRating"
+                onClick={() =>
+                  handleSort("averageRating")
+                }
+                className="flex items-center gap-2 font-semibold hover:text-blue-600"
+              >
+                Rating
+                {sortBy ===
+                  "averageRating" &&
+                  (order === "asc" ? (
+                    <ArrowUp size={16} />
+                  ) : (
+                    <ArrowDown size={16} />
+                  ))}
+              </button>,
+
               "Action",
             ]}
           >
@@ -125,7 +215,6 @@ const Stores = () => {
                 </td>
 
                 <td className="border-b px-4 py-3">
-
                   <button
                     onClick={() =>
                       openDetails(store.id)
@@ -134,9 +223,7 @@ const Stores = () => {
                   >
                     View
                   </button>
-
                 </td>
-
               </tr>
             ))}
           </Table>

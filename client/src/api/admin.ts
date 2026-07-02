@@ -31,15 +31,15 @@ export interface UsersResponse {
 export const getUsers = (
   page = 1,
   search = "",
-  limit = 10
+  sortBy = "createdAt",
+  order: "asc" | "desc" = "desc"
 ) => {
   return axiosInstance.get("/admin/users", {
     params: {
       page,
-      limit,
       search,
-      sortBy: "createdAt",
-      order: "desc",
+      sortBy,
+      order,
     },
   });
 };
@@ -85,15 +85,15 @@ export interface StoresResponse {
 export const getStores = (
   page = 1,
   search = "",
-  limit = 10
+  sortBy = "createdAt",
+  order: "asc" | "desc" = "desc"
 ) => {
   return axiosInstance.get("/admin/stores", {
     params: {
       page,
-      limit,
       search,
-      sortBy: "createdAt",
-      order: "desc",
+      sortBy,
+      order,
     },
   });
 };

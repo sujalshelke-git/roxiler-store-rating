@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 interface TableProps {
-  headers: string[];
+  headers: ReactNode[];
   children: ReactNode;
 }
 
@@ -14,9 +14,9 @@ const Table = ({
       <table className="min-w-full">
         <thead className="bg-slate-100">
           <tr>
-            {headers.map((header) => (
+            {headers.map((header, index) => (
               <th
-                key={header}
+                key={index}
                 className="border-b px-4 py-3 text-left font-semibold"
               >
                 {header}
