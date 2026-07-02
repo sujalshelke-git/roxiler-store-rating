@@ -283,10 +283,31 @@ export const getUserById = async (id: string) => {
     where: {
       id,
     },
-    include: {
-      store: true,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      address: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+
+      store: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          address: true,
+        },
+      },
+
       ratings: {
-        include: {
+        select: {
+          id: true,
+          rating: true,
+          createdAt: true,
+          updatedAt: true,
+
           store: {
             select: {
               id: true,
@@ -297,10 +318,68 @@ export const getUserById = async (id: string) => {
       },
     },
   });
-
   if (!user) {
     throw new AppError("User not found", 404);
   }
 
   return user;
+};
+
+export const getStoreById = async (id: string) => {
+  const store = await prisma.store.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      address: true,
+      createdAt: true,
+      updatedAt: true,
+
+      owner: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          address: true,
+        },
+      },
+
+      ratings: {
+        select: {
+          id: true,
+          rating: true,
+
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!store) {
+    throw new AppError("Store not found", 404);
+  }
+
+  const averageRating =
+    store.ratings.length === 0
+      ? 0
+      : store.ratings.reduce(
+          (sum, item) => sum + item.rating,
+          0
+        ) / store.ratings.length;
+
+  return {
+    ...store,
+    averageRating: Number(
+      averageRating.toFixed(1)
+    ),
+  };
 };
