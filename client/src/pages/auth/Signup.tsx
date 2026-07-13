@@ -1,128 +1,188 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "../../api/axios";
+// import { useState } from "react";
+// import { Link, useNavigate } from "react-router-dom";
+// import axios from "../../api/axios";
+// import { Star } from "lucide-react";
 
-const Signup = () => {
-  const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    address: "",
-    password: "",
-  });
+// const Signup = () => {
+//   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
+//   const [form, setForm] = useState({
+//     name: "",
+//     email: "",
+//     address: "",
+//     password: "",
+//   });
 
-  const [error, setError] = useState("");
+//   const [loading, setLoading] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
-  };
+//   const [error, setError] = useState("");
 
-  const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
-    e.preventDefault();
+//   const handleChange = (
+//     e: React.ChangeEvent<HTMLInputElement>
+//   ) => {
+//     setForm({
+//       ...form,
+//       [e.target.name]: e.target.value,
+//     });
+//   };
 
-    try {
-      setLoading(true);
+//   const handleSubmit = async (
+//     e: React.FormEvent
+//   ) => {
+//     e.preventDefault();
 
-      setError("");
+//     try {
+//       setLoading(true);
 
-      await axios.post("/auth/signup", form);
+//       setError("");
 
-      navigate("/login");
-    } catch (err: any) {
-      setError(
-        err.response?.data?.message ??
-          "Signup failed"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+//       await axios.post("/auth/signup", form);
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-100">
-      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
+//       navigate("/login");
+//     } catch (err: any) {
+//       setError(
+//         err.response?.data?.message ??
+//           "Signup failed"
+//       );
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
-        <h1 className="mb-6 text-center text-3xl font-bold">
-          Create Account
-        </h1>
+//   return (
+//   <div className="min-h-screen grid md:grid-cols-2">
+//     {/* Left Panel */}
+//     <div className="hidden md:flex flex-col justify-between bg-[#162D4F] px-12 py-8 text-white">
+//       <Link to="/" className="flex items-center gap-2">
+//         <Star
+//           size={18}
+//           className="fill-amber-400 text-amber-400"
+//         />
+//         <span className="text-xl font-bold">
+//           RateHub
+//         </span>
+//       </Link>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
+//       <div className="max-w-sm">
+//         <h1 className="text-4xl font-bold leading-tight">
+//           One login.
+//           <br />
+//           Every role.
+//         </h1>
 
-          <input
-            name="name"
-            placeholder="Full Name"
-            className="w-full rounded border p-3"
-            onChange={handleChange}
-          />
+//         <p className="mt-5 text-sm leading-7 text-slate-300">
+//           Shoppers rate. Owners listen. Admins govern.
+//           All backed by row-level security and
+//           role-based access.
+//         </p>
+//       </div>
 
-          <input
-            name="email"
-            placeholder="Email"
-            className="w-full rounded border p-3"
-            onChange={handleChange}
-          />
+//       <p className="text-xs text-slate-400">
+//         © 2026 RateHub
+//       </p>
+//     </div>
 
-          <input
-            name="address"
-            placeholder="Address"
-            className="w-full rounded border p-3"
-            onChange={handleChange}
-          />
+//     {/* Right Panel */}
+//     <div className="flex items-center justify-center bg-white px-8 py-8">
+//       <div className="w-full max-w-sm">
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className="w-full rounded border p-3"
-            onChange={handleChange}
-          />
+//         <h1 className="text-3xl font-bold text-slate-900">
+//           Create your account
+//         </h1>
 
-          {error && (
-            <p className="text-red-500 text-sm">
-              {error}
-            </p>
-          )}
+//         <p className="mt-2 mb-6 text-sm text-slate-500">
+//           Sign up as a shopper to start rating stores.
+//         </p>
 
-          <button
-            className="w-full rounded bg-blue-600 py-3 text-white"
-            disabled={loading}
-          >
-            {loading
-              ? "Creating..."
-              : "Create Account"}
-          </button>
+//         <form
+//           onSubmit={handleSubmit}
+//           className="space-y-4"
+//         >
+//           <div>
+//             <label className="mb-1 block text-sm font-medium text-slate-700">
+//               Full Name
+//             </label>
 
-        </form>
+//             <input
+//               name="name"
+//               onChange={handleChange}
+//               placeholder="Between 20 to 60 characters"
+//               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-[#162D4F]"
+//             />
+//           </div>
 
-        <p className="mt-4 text-center">
+//           <div>
+//             <label className="mb-1 block text-sm font-medium text-slate-700">
+//               Address
+//             </label>
 
-          Already have an account?
+//             <input
+//               name="address"
+//               onChange={handleChange}
+//               placeholder="Upto 400 characters"
+//               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-[#162D4F]"
+//             />
+//           </div>
 
-          <Link
-            to="/login"
-            className="ml-2 text-blue-600"
-          >
-            Login
-          </Link>
+//           <div>
+//             <label className="mb-1 block text-sm font-medium text-slate-700">
+//               Email
+//             </label>
 
-        </p>
+//             <input
+//               type="email"
+//               name="email"
+//               onChange={handleChange}
+//               placeholder="you@example.com"
+//               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-[#162D4F]"
+//             />
+//           </div>
 
-      </div>
-    </div>
-  );
-};
+//           <div>
+//             <label className="mb-1 block text-sm font-medium text-slate-700">
+//               Password
+//             </label>
 
-export default Signup;
+//             <input
+//               type="password"
+//               name="password"
+//               onChange={handleChange}
+//               placeholder="8-16 characters, one uppercase, 1 special case"
+//               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-[#162D4F]"
+//             />
+//           </div>
+
+//           {error && (
+//             <p className="text-sm text-red-500">
+//               {error}
+//             </p>
+//           )}
+
+//           <button
+//             disabled={loading}
+//             className="mt-2 w-full rounded-lg bg-[#162D4F] py-2.5 text-sm font-semibold text-white transition hover:bg-[#1c3b68]"
+//           >
+//             {loading
+//               ? "Creating..."
+//               : "Create Account"}
+//           </button>
+//         </form>
+
+//         <p className="mt-6 text-center text-sm text-slate-500">
+//           Already have an account?
+//           <Link
+//             to="/login"
+//             className="ml-1 font-semibold text-[#162D4F] hover:underline"
+//           >
+//             Sign In
+//           </Link>
+//         </p>
+
+//       </div>
+//     </div>
+//   </div>
+// );
+// };
+
+// export default Signup;

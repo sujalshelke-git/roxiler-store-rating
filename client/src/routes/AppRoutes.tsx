@@ -1,12 +1,13 @@
 import {
   BrowserRouter,
-  Navigate,
+  
   Route,
   Routes,
 } from "react-router-dom";
 
 import ProtectedRoute from "../components/common/ProtectedRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
+import Landing from "../pages/Landing"
 
 // Auth
 import Login from "../pages/auth/Login";
@@ -18,6 +19,7 @@ import Users from "../pages/admin/Users";
 import Stores from "../pages/admin/Stores";
 import CreateUser from "../pages/admin/CreateUser";
 import CreateStore from "../pages/admin/CreateStore";
+
 
 // User
 import UserStores from "../pages/user/Stores";
@@ -39,7 +41,7 @@ const AppRoutes = () => {
 
         <Route
           path="/"
-          element={<Navigate to="/login" replace />}
+          element={<Landing />}
         />
 
         <Route
