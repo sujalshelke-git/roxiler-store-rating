@@ -164,7 +164,7 @@ const DashboardSidebar = () => {
         <div className="mb-5 rounded-2xl bg-slate-100 p-4">
 
           <h3 className="font-semibold text-slate-900">
-            {user?.name}
+            {user?.email}
           </h3>
 
           <p className="mt-1 text-sm text-slate-500">

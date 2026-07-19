@@ -1,6 +1,5 @@
 import {
   Bell,
-  Search,
   LogOut,
   UserCircle2,
 } from "lucide-react";
@@ -43,22 +42,7 @@ const DashboardNavbar = () => {
 
       <div className="flex items-center gap-5">
 
-        {/* Search */}
-
-        <div className="relative hidden lg:block">
-
-          <Search
-            size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-          />
-
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-72 rounded-xl border border-slate-200 bg-slate-50 py-3 pl-11 pr-4 outline-none transition focus:border-blue-500 focus:bg-white"
-          />
-
-        </div>
+       
 
         {/* Notification */}
 
