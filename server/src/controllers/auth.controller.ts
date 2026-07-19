@@ -34,11 +34,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
   // Store JWT in HTTP-only Cookie
   res.cookie("token", result.token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  });
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: "/",
+});
 
   return res.status(200).json({
     success: true,
@@ -78,7 +79,12 @@ export const updatePassword = asyncHandler(
 );
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/",
+});
 
   return res.status(200).json({
     success: true,
