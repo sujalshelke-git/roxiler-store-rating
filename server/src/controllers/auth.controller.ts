@@ -3,6 +3,7 @@ import {
   registerUser,
   loginUser,
   changePassword,
+  getCurrentUser as getCurrentUserService,
 } from "../services/auth.service";
 import {
   signupSchema,
@@ -48,9 +49,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
 export const getCurrentUser = asyncHandler(
   async (req: Request, res: Response) => {
+    const user = await getCurrentUserService(req.user!.id);
+
     return res.status(200).json({
       success: true,
-      data: req.user,
+      data: user,
     });
   }
 );

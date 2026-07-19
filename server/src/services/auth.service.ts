@@ -123,3 +123,24 @@ export const changePassword = async (
     message: "Password changed successfully",
   };
 };
+
+export const getCurrentUser = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      address: true,
+      role: true,
+    },
+  });
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  return user;
+};

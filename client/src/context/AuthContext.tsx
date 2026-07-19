@@ -28,7 +28,7 @@ export const AuthProvider = ({
   const fetchCurrentUser = async () => {
     try {
       const res = await authApi.getCurrentUser();
-
+      console.log("Current User:", res.data.data);
       setUser(res.data.data);
     } catch {
       setUser(null);
